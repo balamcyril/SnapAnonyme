@@ -1,7 +1,7 @@
 package com.snap.anonyme;
 import java.util.Random;
 import java.util.ArrayList;
-import java.io.Serializable;
+import java.io.*;
 
 public class User implements Serializable{
     private static int nb=0;
@@ -20,20 +20,56 @@ public class User implements Serializable{
         while (this.nbList.contains(this.id)){
             this.id = random.nextInt(1000);
         }
-        this.nbList.add(this.id);
-        this.nb++;
+
+        try {
+            File file = new File("nbUser.txt");
+            FileReader fr;
+
+            fr = new FileReader(file);
+            String str = "";
+            int i = 0;
+            while ((i = fr.read()) != -1)
+                str += (char) i;
+            this.nb = Integer.valueOf(str).intValue();
+            fr.close();
+            System.out.println("nb utilisateur ="+ this.nb);
+
+            ObjectInputStream ois;
+            ois = new ObjectInputStream(
+                    new BufferedInputStream(
+                            new FileInputStream(
+                                    new File("listUser.txt"))));
+
+            System.out.println("nb fin ="+ this.nb);
+            for (i=0; i<this.nb; i++)
+                this.nbList.add((User)ois.readObject());
+
+            this.nbList.add(this);
+            FileWriter fw;
+            fw = new FileWriter(file);
+            fw.write(this.nb++);
+            fw.close();
+
+            ObjectOutputStream oos;
+            oos = new ObjectOutputStream(
+                    new BufferedOutputStream(
+                            new FileOutputStream(
+                                    new File("listUser.txt"))));
+            for (i=0; i<this.nb; i++)
+                oos.writeObject(this.nbList.get(i));
+
+            ois.close();
+            oos.close();
+        }catch (FileNotFoundException e)
+        {System.out.println("Aucun fichier nbuser a lire");}
+        catch (IOException e)
+        {System.out.println("Le fichier nbuser ne peu pas être lu");}
+        catch (ClassNotFoundException e)
+        {System.out.println("La classe User n'existe pas");}
     }
     public User() {
-        Random random = new Random();
-        this.id = random.nextInt(1000);
         this.login = null;
         this.password = null;
-
-        while (this.nbList.contains(this.id)){
-            this.id = random.nextInt(1000);
-        }
-        this.nbList.add(this.id);
-        this.nb++;
     }
 
     public int getId() {

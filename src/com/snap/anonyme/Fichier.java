@@ -61,11 +61,8 @@ public class Fichier implements Serializable{
 
     @Override
     public String toString() {
-        return "Fichier{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", size=" + size +
-                ", mimeType='" + mimeType + '\'' +
-                '}';
+        return "" + url +
+                "." + mimeType +
+                "";
     }
 }
